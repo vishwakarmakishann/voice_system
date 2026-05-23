@@ -1,0 +1,5 @@
+pipecat-ai[livekit,deepgram,groq,cartesia]
+pydantic
+pydantic-settings
+structlog
+python-json-logger

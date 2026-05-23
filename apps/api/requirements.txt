@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+sqlalchemy
+asyncpg
+alembic
+redis
+PyJWT
+structlog
+python-json-logger
+qdrant-client
+fastembed
+groq
