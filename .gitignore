@@ -108,3 +108,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/graphify-out
+
+plan.md
+steps.txt
+
+test*.py
