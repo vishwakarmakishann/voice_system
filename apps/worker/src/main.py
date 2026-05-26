@@ -3,6 +3,7 @@ import sys
 import structlog
 import os
 import aiohttp
+import argparse
 
 from pipecat.frames.frames import EndFrame
 from pipecat.pipeline.pipeline import Pipeline
@@ -29,7 +30,7 @@ structlog.configure(
 
 logger = structlog.get_logger()
 
-async def main():
+async def main(room_name: str):
     if not settings.DEEPGRAM_API_KEY or not settings.GROQ_API_KEY or not settings.CARTESIA_API_KEY:
         await logger.aerror("missing_api_keys", error="DEEPGRAM_API_KEY, GROQ_API_KEY, or CARTESIA_API_KEY is not set.")
         sys.exit(1)
@@ -40,11 +41,11 @@ async def main():
         settings.LIVEKIT_API_SECRET
     ).with_identity("assistant").with_name("Voice Assistant").with_grants(api.VideoGrants(
         room_join=True,
-        room="voice-room",
+        room=room_name,
     )).to_jwt()
 
     transport = LiveKitTransport(
-        room_name="voice-room",
+        room_name=room_name,
         token=token,
         url=settings.LIVEKIT_URL,
         params=LiveKitParams(
@@ -53,15 +54,41 @@ async def main():
         )
     )
 
-    stt = DeepgramSTTService(api_key=settings.DEEPGRAM_API_KEY)
-    llm = GroqLLMService(
-        api_key=settings.GROQ_API_KEY,
-        settings=GroqLLMService.Settings(model="llama-3.1-8b-instant")
-    )
-    tts = CartesiaTTSService(
-        api_key=settings.CARTESIA_API_KEY,
-        settings=CartesiaTTSService.Settings(voice="79a125e8-cd45-4c13-8a67-188112f4dd22")
-    )
+    # Factory: STT Provider
+    if settings.STT_PROVIDER == "deepgram":
+        stt = DeepgramSTTService(api_key=settings.DEEPGRAM_API_KEY)
+    else:
+        raise ValueError(f"Unsupported STT provider: {settings.STT_PROVIDER}")
+
+    # Factory: LLM Provider
+    if settings.LLM_PROVIDER == "groq":
+        llm = GroqLLMService(
+            api_key=settings.GROQ_API_KEY,
+            settings=GroqLLMService.Settings(model="llama-3.1-8b-instant")
+        )
+    elif settings.LLM_PROVIDER == "openai":
+        from pipecat.services.openai.llm import OpenAILLMService
+        llm = OpenAILLMService(
+            api_key=settings.OPENAI_API_KEY,
+            model="gpt-4o-mini"
+        )
+    else:
+        raise ValueError(f"Unsupported LLM provider: {settings.LLM_PROVIDER}")
+
+    # Factory: TTS Provider
+    if settings.TTS_PROVIDER == "cartesia":
+        tts = CartesiaTTSService(
+            api_key=settings.CARTESIA_API_KEY,
+            settings=CartesiaTTSService.Settings(voice="79a125e8-cd45-4c13-8a67-188112f4dd22")
+        )
+    elif settings.TTS_PROVIDER == "elevenlabs":
+        from pipecat.services.elevenlabs.tts import ElevenLabsTTSService
+        tts = ElevenLabsTTSService(
+            api_key=settings.ELEVENLABS_API_KEY,
+            voice_id="EXAVITQu4vr4xnSDxMaL"
+        )
+    else:
+        raise ValueError(f"Unsupported TTS provider: {settings.TTS_PROVIDER}")
 
     from pipecat.audio.vad.silero import SileroVADAnalyzer
     from pipecat.processors.audio.vad_processor import VADProcessor
@@ -71,12 +98,20 @@ async def main():
 
     from pipecat.adapters.schemas.tools_schema import ToolsSchema
 
-    current_user_id = "unknown"
+    # Parse user_id reliably from the room name (e.g., room-user_xyz-1234)
+    room_parts = room_name.split("-")
+    if len(room_parts) >= 2:
+        current_user_id = room_parts[1]
+    else:
+        current_user_id = "unknown"
+
+    # Worker authentication headers
+    worker_headers = {"X-Worker-Key": settings.WORKER_API_KEY}
 
     async def fetch_core_memory(user_id: str) -> str:
         async with aiohttp.ClientSession() as session:
             try:
-                async with session.get(f"http://localhost:8000/memory/core/{user_id}") as response:
+                async with session.get(f"{settings.API_URL}/memory/core/{user_id}", headers=worker_headers) as response:
                     if response.status == 200:
                         data = await response.json()
                         return data.get("persona", "")
@@ -87,15 +122,15 @@ async def main():
     async def save_session_memory(user_id: str, transcript: list):
         async with aiohttp.ClientSession() as session:
             try:
-                await session.post(f"http://localhost:8000/memory/session", json={"user_id": user_id, "transcript": transcript})
+                await session.post(f"{settings.API_URL}/memory/session", json={"user_id": user_id, "transcript": transcript}, headers=worker_headers)
             except Exception as e:
                 await logger.aerror(f"Error saving session memory: {e}")
 
     async def search_memory(params, query: str):
-        """Search the user's archival memory for past facts or events."""
+        """Use this tool ONLY to search for the user's personal past memories, preferences, and previous conversations. DO NOT use this tool for general knowledge, definitions, or world facts."""
         async with aiohttp.ClientSession() as session:
             try:
-                async with session.post(f"http://localhost:8000/memory/search", json={"user_id": current_user_id, "query": query}) as response:
+                async with session.post(f"{settings.API_URL}/memory/search", json={"user_id": current_user_id, "query": query}, headers=worker_headers) as response:
                     if response.status == 200:
                         data = await response.json()
                         results = data.get("results", [])
@@ -111,7 +146,7 @@ async def main():
     messages = [
         {
             "role": "system",
-            "content": "You are a helpful voice assistant in a realtime voice chat. Keep your responses extremely concise and conversational. Do not use markdown, emojis, or symbols as your response will be read aloud by a text to speech system. Listen to the user and assist them. Be polite and professional.",
+            "content": "You are a helpful voice assistant in a realtime voice chat. Keep your responses extremely concise and conversational. Do not use markdown, emojis, or symbols as your response will be read aloud by a text to speech system. Listen to the user and assist them. Be polite and professional. ONLY use the search_memory tool if the user explicitly asks about their past conversations, personal facts, or preferences. Do NOT use tools for general knowledge questions.",
         }
     ]
 
@@ -139,25 +174,8 @@ async def main():
         )
     )
 
-    @transport.event_handler("on_participant_connected")
-    async def on_participant_connected(transport, participant_sid):
-        nonlocal current_user_id
-        
-        # pipecat passes the participant_sid (e.g. PA_...)
-        # We need to get the actual identity from the room
-        await asyncio.sleep(0.5) # Wait for LiveKit to update the participants dict
-        
-        participant_obj = transport._client.room.remote_participants.get(participant_sid)
-        if participant_obj:
-            current_user_id = participant_obj.identity
-        else:
-            # Fallback: get the first remote participant
-            participants = list(transport._client.room.remote_participants.values())
-            if participants:
-                current_user_id = participants[0].identity
-            else:
-                current_user_id = str(participant_sid)
-        
+    @transport.event_handler("on_first_participant_joined")
+    async def on_first_participant_joined(transport, participant):
         await logger.ainfo("participant_connected_identity", participant=current_user_id)
         
         # Fetch Core Memory and inject it
@@ -175,15 +193,9 @@ async def main():
         # Save memory
         await save_session_memory(current_user_id, context.get_messages())
         
-        # Reset the context so the next user starts fresh
-        context.set_messages([
-            {
-                "role": "system",
-                "content": "You are a helpful voice assistant in a realtime voice chat. Keep your responses extremely concise and conversational. Do not use markdown, emojis, or symbols as your response will be read aloud by a text to speech system. Listen to the user and assist them. Be polite and professional.",
-            }
-        ])
-        await logger.ainfo("context_reset_for_next_user")
-        # Notice we removed EndFrame() so the worker stays alive!
+        # Shut down worker gracefully for this session
+        await task.queue_frames([EndFrame()])
+        await logger.ainfo("worker_shutting_down", room=room_name)
 
     runner = PipelineRunner()
 
@@ -191,4 +203,8 @@ async def main():
     await runner.run(task)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    parser = argparse.ArgumentParser(description="Voice Assistant Worker")
+    parser.add_argument("--room", type=str, required=True, help="LiveKit Room Name")
+    args = parser.parse_args()
+    
+    asyncio.run(main(args.room))

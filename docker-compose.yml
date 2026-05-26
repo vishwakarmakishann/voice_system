@@ -1,0 +1,114 @@
+version: '3.8'
+
+services:
+  # -------------------------
+  # Core Infrastructure
+  # -------------------------
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: voice_admin
+      POSTGRES_PASSWORD: voice_password
+      POSTGRES_DB: voice_system
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U voice_admin -d voice_system"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  livekit:
+    image: livekit/livekit-server:latest
+    command:
+      - --dev
+      - --keys
+      - "devkey: secret"
+    ports:
+      - "7885:7880"
+      - "7886:7881"
+      - "7887:7882/udp"
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+  # -------------------------
+  # Application Services
+  # -------------------------
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    working_dir: /app/apps/api
+    ports:
+      - "8000:8000"
+    env_file:
+      - apps/api/.env
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      REDIS_HOST: redis
+      QDRANT_URL: http://qdrant:6333
+      LIVEKIT_URL: http://livekit:7880
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    working_dir: /app/apps/api
+    env_file:
+      - apps/api/.env
+      - apps/worker/.env
+    environment:
+      # Need to ensure celery uses correct pythonpath
+      PYTHONPATH: /app/apps/api:/app/apps/worker
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      REDIS_HOST: redis
+      QDRANT_URL: http://qdrant:6333
+      LIVEKIT_URL: http://livekit:7880
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    command: celery -A src.tasks worker --loglevel=info
+
+  frontend:
+    build:
+      context: apps/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+  redis_data:
+  qdrant_data:

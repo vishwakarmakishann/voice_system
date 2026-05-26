@@ -7,10 +7,17 @@ import redis.asyncio as redis
 from .core.config import settings
 from .core.logger import setup_logging, logger
 from .core.db import get_db, get_redis
-from .api import livekit, memory
+from .api import livekit, memory, auth
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from .core.rate_limit import limiter
 setup_logging()
 
 app = FastAPI(title=settings.PROJECT_NAME, version=settings.VERSION)
+
+# Rate Limiting
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
@@ -20,6 +27,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
 app.include_router(livekit.router, prefix="/livekit", tags=["LiveKit"])
 app.include_router(memory.router, prefix="/memory", tags=["Memory"])
 @app.on_event("startup")

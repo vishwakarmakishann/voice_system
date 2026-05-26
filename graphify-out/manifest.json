@@ -1,0 +1,262 @@
+{
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/test_qdrant.py": {
+    "mtime": 1779521718.466431,
+    "ast_hash": "61fea0110724bbe060b6849c4150e184",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/packages/core/src/core/events.py": {
+    "mtime": 1779446417.9322205,
+    "ast_hash": "8ec207de8df092b2a05f954b3aa555c6",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/packages/core/src/core/errors.py": {
+    "mtime": 1779446407.3961933,
+    "ast_hash": "4a4b4a4fa40df7d322a7fa7632d83c18",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/packages/core/src/core/interfaces/llm.py": {
+    "mtime": 1779446403.345183,
+    "ast_hash": "22eaa3205e8ce9a616a65f04304f7a4f",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/packages/core/src/core/interfaces/tts.py": {
+    "mtime": 1779446405.375188,
+    "ast_hash": "9f4ce37b4abcfb4c868f83d7a81d6ae1",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/packages/core/src/core/interfaces/stt.py": {
+    "mtime": 1779446401.3371778,
+    "ast_hash": "74c9e1558157830900e33dc8dca63bc8",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/packages/core/src/core/models/memory.py": {
+    "mtime": 1779446409.4191985,
+    "ast_hash": "a14e54110fcba3bc639e4c1c6f8622ed",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/frontend/package.json": {
+    "mtime": 1779447397.464132,
+    "ast_hash": "be17f82c124532425a1836f271a560f0",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/frontend/postcss.config.mjs": {
+    "mtime": 1779447201.6410017,
+    "ast_hash": "239f3ebf717465dc636818a1a619398d",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/frontend/next.config.ts": {
+    "mtime": 1779447201.6410017,
+    "ast_hash": "9b77af189a21a7a64e4bd7a426f64176",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/frontend/eslint.config.mjs": {
+    "mtime": 1779447201.6400015,
+    "ast_hash": "dfa1f5f6a7037bf39dc510f30b180002",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/frontend/tsconfig.json": {
+    "mtime": 1779447201.6420016,
+    "ast_hash": "ee17fd1c97c735e9f3564e3f5251f125",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/frontend/src/app/page.tsx": {
+    "mtime": 1779535831.4841332,
+    "ast_hash": "5d5c27ce4350d7d70ab1437b38f8580e",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/frontend/src/app/layout.tsx": {
+    "mtime": 1779447201.6410017,
+    "ast_hash": "94c34ef68b3949a75807a0211ec2273c",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/worker/test_livekit.py": {
+    "mtime": 1779520377.6641197,
+    "ast_hash": "b787c719c55791d316e5dd0792ced8b6",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/worker/test_get.py": {
+    "mtime": 1779520410.225384,
+    "ast_hash": "31ebcbd366ad7fd4d59b8ea6595b8cfa",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/worker/src/main.py": {
+    "mtime": 1779539769.8871121,
+    "ast_hash": "2347cd5581ce945babf6f3248c93051f",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/worker/src/config.py": {
+    "mtime": 1779539749.021997,
+    "ast_hash": "bcfbd4bb6890d15ef200f063c4af9a6c",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/src/tasks.py": {
+    "mtime": 1779535546.7440927,
+    "ast_hash": "1d861950bad5c92a85181ea33cdb65d2",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/src/main.py": {
+    "mtime": 1779533381.4190369,
+    "ast_hash": "94abaf85307b8c55c3d9e9b5526fbb1b",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/src/__init__.py": {
+    "mtime": 1779446652.1774178,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/src/services/memory_service.py": {
+    "mtime": 1779539089.356626,
+    "ast_hash": "6816a7e96755e7ee2618591d52817c9d",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/src/models/memory.py": {
+    "mtime": 1779452167.5461638,
+    "ast_hash": "80c993ff8bfe79da15d89a7d5dff672b",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/src/models/__init__.py": {
+    "mtime": 1779533268.6425002,
+    "ast_hash": "91d6ac34b53585e2c8c04e04e3e0e7cb",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/src/models/user.py": {
+    "mtime": 1779533260.134872,
+    "ast_hash": "732cf95b13768d0e16b6587527bdb12c",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/src/core/config.py": {
+    "mtime": 1779452155.6146133,
+    "ast_hash": "431a56e264b122397208de42927ec3a1",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/src/core/__init__.py": {
+    "mtime": 1779446652.1774178,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/src/core/security.py": {
+    "mtime": 1779534066.8313773,
+    "ast_hash": "8eff9852bc76db24e7b968438af9c29e",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/src/core/db.py": {
+    "mtime": 1779446568.5276055,
+    "ast_hash": "31db041cf16665d0d8a700c3927cfb4c",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/src/core/logger.py": {
+    "mtime": 1779446565.531598,
+    "ast_hash": "42b7e68c7b08611ec43052c60af78d09",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/src/api/memory.py": {
+    "mtime": 1779452214.3084729,
+    "ast_hash": "dc866858fe236dfd456072e956649c42",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/src/api/livekit.py": {
+    "mtime": 1779534943.8816729,
+    "ast_hash": "0e2a26973e36de8905cbdc07978a4218",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/src/api/__init__.py": {
+    "mtime": 1779446652.1774178,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/src/api/auth.py": {
+    "mtime": 1779533755.8331397,
+    "ast_hash": "f3dff6e87648c790787edf2527557a01",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/migrations/env.py": {
+    "mtime": 1779509310.6516051,
+    "ast_hash": "139d84d7e398a186eb29e25f6d079fe9",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/migrations/versions/153865d4b423_actually_add_core_memory.py": {
+    "mtime": 1779509330.7440784,
+    "ast_hash": "9e13e067950d9c70c5570be3e32f0ac0",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/migrations/versions/773a88ef0845_add_core_memory_table.py": {
+    "mtime": 1779452294.60879,
+    "ast_hash": "ee05775e0c3a4cf675a969d5060d9138",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/migrations/versions/4150cbb58c0d_add_users_table.py": {
+    "mtime": 1779533283.8724558,
+    "ast_hash": "ae5c7c9f0c24831e634bb83fb8ebccd1",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/migrations/versions/22b293a3b720_initial_config.py": {
+    "mtime": 1779446652.6544232,
+    "ast_hash": "2b889184be37562cd94bf23b6a4b0249",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/plan.md": {
+    "mtime": 1779446029.3821971,
+    "ast_hash": "4489a24af4b7ee151224c3a826eef526",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/steps.txt": {
+    "mtime": 1779535301.5497835,
+    "ast_hash": "0e5a3f389ba1512bb547fa7eb0164963",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/frontend/README.md": {
+    "mtime": 1779447201.6400015,
+    "ast_hash": "f15aaa42d5d299d091b1171097ea56ad",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/frontend/CLAUDE.md": {
+    "mtime": 1779447222.916133,
+    "ast_hash": "5c27369b226fcf2be8a6cfe52224e767",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/frontend/AGENTS.md": {
+    "mtime": 1779447222.916133,
+    "ast_hash": "9e09241799026ac05be315a2f0b50055",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/worker/requirements.txt": {
+    "mtime": 1779448163.050732,
+    "ast_hash": "b2977d13150347b5bfb74fe7b2357d01",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/api/requirements.txt": {
+    "mtime": 1779533875.540015,
+    "ast_hash": "7d5559ce4bb98558b23205aca62393e8",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/infrastructure/docker/docker-compose.yml": {
+    "mtime": 1779450973.7682836,
+    "ast_hash": "55224f3ad6cd18713bab24f49ccc7c5b",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/frontend/public/window.svg": {
+    "mtime": 1779447201.6410017,
+    "ast_hash": "a2760511c65806022ad20adf74370ff3",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/frontend/public/vercel.svg": {
+    "mtime": 1779447201.6410017,
+    "ast_hash": "c0af2f507b369b085b35ef4bbe3bcf1e",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/frontend/public/file.svg": {
+    "mtime": 1779447201.6400015,
+    "ast_hash": "d09f95206c3fa0bb9bd9fefabfd0ea71",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/frontend/public/globe.svg": {
+    "mtime": 1779447201.6410017,
+    "ast_hash": "2aaafa6a49b6563925fe440891e32717",
+    "semantic_hash": ""
+  },
+  "/home/kishanvishwakarma/Documents/voice_system_v1.0/apps/frontend/public/next.svg": {
+    "mtime": 1779447201.6410017,
+    "ast_hash": "8e061864f388b47f33a1c3780831193e",
+    "semantic_hash": ""
+  }
+}

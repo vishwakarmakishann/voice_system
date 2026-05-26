@@ -4,8 +4,8 @@
 # Backend
 ~/Documents/voice_system_v1.0/apps/api$ uvicorn src.main:app --reload
 
-# Worker
-~/Documents/voice_system_v1.0/apps/worker$ python -m src.main
+# Celery Task Queue (Spawns AI Workers Dynamically)
+~/Documents/voice_system_v1.0/apps/api$ celery -A src.tasks worker --loglevel=info
 
 # Frontend
 ~/Documents/voice_system_v1.0/apps/frontend$ npm run dev

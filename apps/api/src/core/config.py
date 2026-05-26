@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "super-secret-key-change-in-production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    WORKER_API_KEY: str = "internal-worker-secret-key"
 
     # LiveKit
     LIVEKIT_URL: str = "http://localhost:7885"

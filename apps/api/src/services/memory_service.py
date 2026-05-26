@@ -18,22 +18,24 @@ except ImportError:
     embedding_model = None
     print("Warning: fastembed not installed")
 
-# Initialize clients
-if settings.GROQ_API_KEY:
-    groq_client = AsyncGroq(api_key=settings.GROQ_API_KEY)
-else:
-    groq_client = None
-
-qdrant_client = AsyncQdrantClient(url=settings.QDRANT_URL)
 COLLECTION_NAME = "archival_memory"
+
+def get_groq_client():
+    if settings.GROQ_API_KEY:
+        return AsyncGroq(api_key=settings.GROQ_API_KEY)
+    return None
+
+def get_qdrant_client():
+    return AsyncQdrantClient(url=settings.QDRANT_URL)
 
 async def init_qdrant():
     """Ensure the Qdrant collection exists."""
     try:
-        exists = await qdrant_client.collection_exists(COLLECTION_NAME)
+        qclient = get_qdrant_client()
+        exists = await qclient.collection_exists(COLLECTION_NAME)
         if not exists:
             # We will use fastembed's default embedding size (384 for BAAI/bge-small-en-v1.5)
-            await qdrant_client.create_collection(
+            await qclient.create_collection(
                 collection_name=COLLECTION_NAME,
                 vectors_config=VectorParams(size=384, distance=Distance.COSINE),
             )
@@ -45,7 +47,8 @@ async def extract_memories(user_id: str, transcript: list[dict], db: AsyncSessio
     Background task to analyze a conversation transcript, 
     extract Core and Archival memories, and store them.
     """
-    if not groq_client:
+    gclient = get_groq_client()
+    if not gclient:
         print("GROQ_API_KEY not set in API, skipping memory extraction.")
         return
 
@@ -55,33 +58,45 @@ async def extract_memories(user_id: str, transcript: list[dict], db: AsyncSessio
         return
 
     # 2. Extract Core Memory updates
-    core_prompt = f"""
-    You are extracting ONLY permanent, identity-level facts about the user from the transcript.
-    Examples of core facts: name, age, profession, hobbies, dietary restrictions, personality traits, location.
-    DO NOT include specific events, past questions, or conversational history.
-    Format as a plain text bulleted list without markdown. If there are no new core facts, reply exactly with the word "NONE".
-    
-    Conversation:
-    {chat_text}
-    """
     try:
-        core_res = await groq_client.chat.completions.create(
-            messages=[{"role": "user", "content": core_prompt}],
-            model="llama-3.1-8b-instant"
-        )
-        new_core_facts = core_res.choices[0].message.content.strip()
+        # Fetch existing memory first to provide to the LLM
+        result = await db.execute(select(CoreMemory).where(CoreMemory.user_id == user_id))
+        memory_record = result.scalars().first()
+        existing_persona = memory_record.persona if memory_record else "No existing core facts."
+
+        core_prompt = f"""
+        You are an AI managing a user's "Core Persona" memory. 
+        Your task is to merge any NEW permanent, identity-level facts from the recent conversation into the existing persona.
         
-        if new_core_facts and "none" not in new_core_facts.lower() and len(new_core_facts) > 5:
-            # Update Postgres
-            result = await db.execute(select(CoreMemory).where(CoreMemory.user_id == user_id))
-            memory_record = result.scalars().first()
-            
+        Examples of core facts: name, age, profession, hobbies, dietary restrictions, personality traits, location, etc.
+        DO NOT include specific conversational history, greetings, or temporary states.
+        
+        Rules:
+        1. Resolve conflicts (e.g. if existing says "Lives in NY" but new says "Moved to LA", update it to "Lives in LA").
+        2. Deduplicate facts.
+        3. Do not add conversational filler like "No new facts" or "Assistant's name". Only output the consolidated bulleted list.
+        4. If there are absolutely no core facts about the user to store, reply exactly with "NONE".
+        5. Output ONLY the bulleted list. No conversational pleasantries.
+        
+        Existing Persona:
+        {existing_persona}
+        
+        Recent Conversation:
+        {chat_text}
+        """
+        
+        core_res = await gclient.chat.completions.create(
+            messages=[{"role": "user", "content": core_prompt}],
+            model="llama-3.1-8b-instant",
+            temperature=0.2
+        )
+        new_persona = core_res.choices[0].message.content.strip()
+        
+        if new_persona and new_persona.strip().upper() != "NONE" and "no other core facts" not in new_persona.lower():
             if memory_record:
-                # Basic dedup
-                if new_core_facts not in memory_record.persona:
-                    memory_record.persona += f"\\n{new_core_facts}"
+                memory_record.persona = new_persona
             else:
-                memory_record = CoreMemory(user_id=user_id, persona=new_core_facts)
+                memory_record = CoreMemory(user_id=user_id, persona=new_persona)
                 db.add(memory_record)
             
             await db.commit()
@@ -100,7 +115,7 @@ async def extract_memories(user_id: str, transcript: list[dict], db: AsyncSessio
     {chat_text}
     """
     try:
-        archival_res = await groq_client.chat.completions.create(
+        archival_res = await gclient.chat.completions.create(
             messages=[{"role": "user", "content": archival_prompt}],
             model="llama-3.1-8b-instant"
         )
@@ -111,7 +126,8 @@ async def extract_memories(user_id: str, transcript: list[dict], db: AsyncSessio
             embeddings = list(embedding_model.embed([summary]))
             vector = embeddings[0].tolist()
             
-            await qdrant_client.upsert(
+            qclient = get_qdrant_client()
+            await qclient.upsert(
                 collection_name=COLLECTION_NAME,
                 points=[
                     PointStruct(
@@ -138,8 +154,9 @@ async def search_archival_memory(user_id: str, query: str, limit: int = 3) -> li
         vector = embeddings[0].tolist()
         
         from qdrant_client.http import models
+        qclient = get_qdrant_client()
         
-        search_result = await qdrant_client.query_points(
+        search_result = await qclient.query_points(
             collection_name=COLLECTION_NAME,
             query=vector,
             limit=limit,

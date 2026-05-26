@@ -12,3 +12,7 @@ python-json-logger
 qdrant-client
 fastembed
 groq
+bcrypt
+python-multipart
+celery
+slowapi
