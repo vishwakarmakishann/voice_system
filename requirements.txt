@@ -16,3 +16,4 @@ bcrypt
 python-multipart
 celery
 slowapi
+pipecat-ai[livekit,deepgram,groq,cartesia]>=1.2.1

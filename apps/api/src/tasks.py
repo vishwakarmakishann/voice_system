@@ -15,22 +15,15 @@ def spawn_worker(room_name: str):
     Spawns a new Pipecat worker process for the given room_name.
     It blocks the Celery worker until the Pipecat worker terminates (when the user leaves).
     """
-    worker_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../worker"))
+    api_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     
-    # We use the worker's own venv python if running locally
-    python_executable = os.path.join(worker_dir, "venv/bin/python")
-    if not os.path.exists(python_executable):
-        import sys
-        python_executable = sys.executable
-    
-    # Isolate the PYTHONPATH so it only loads from the worker directory
-    env = os.environ.copy()
-    env["PYTHONPATH"] = worker_dir
+    import sys
+    python_executable = sys.executable
     
     process = subprocess.Popen(
-        [python_executable, "-m", "src.main", "--room", room_name],
-        cwd=worker_dir,
-        env=env
+        [python_executable, "-m", "src.worker", "--room", room_name],
+        cwd=api_dir,
+        env=os.environ.copy()
     )
     
     # Wait for the worker to finish

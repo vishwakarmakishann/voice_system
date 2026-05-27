@@ -8,24 +8,21 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Copy requirements files for both API and Worker
-COPY apps/api/requirements.txt ./api-requirements.txt
-COPY apps/worker/requirements.txt ./worker-requirements.txt
+# Copy requirements file
+COPY requirements.txt ./requirements.txt
 
 # Install dependencies
-RUN pip install --no-cache-dir -r api-requirements.txt
-RUN pip install --no-cache-dir -r worker-requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY apps/api /app/apps/api
-COPY apps/worker /app/apps/worker
 
 # Copy the entrypoint script
 COPY apps/api/entrypoint.sh /app/apps/api/entrypoint.sh
 RUN chmod +x /app/apps/api/entrypoint.sh
 
 # Set PYTHONPATH so the imports work properly
-ENV PYTHONPATH=/app/apps/api:/app/apps/worker
+ENV PYTHONPATH=/app/apps/api
 
 # Use the entrypoint script
 ENTRYPOINT ["/app/apps/api/entrypoint.sh"]

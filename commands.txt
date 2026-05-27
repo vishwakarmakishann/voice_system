@@ -1,0 +1,11 @@
+docker compose down
+docker compose build --no-cache
+docker compose up -d
+
+docker compose exec postgres psql -U voice_admin -d voice_system
+
+docker compose logs -f api
+
+docker compose logs -f celery_worker
+
+docker compose logs -f frontend

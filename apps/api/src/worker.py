@@ -14,7 +14,7 @@ from pipecat.services.deepgram.stt import DeepgramSTTService
 from pipecat.services.groq.llm import GroqLLMService
 from pipecat.services.cartesia.tts import CartesiaTTSService
 
-from src.config import settings
+from src.core.config import settings
 import logging
 
 logging.basicConfig(level=logging.INFO)

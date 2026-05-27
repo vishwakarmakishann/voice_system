@@ -66,17 +66,15 @@ async def extract_memories(user_id: str, transcript: list[dict], db: AsyncSessio
 
         core_prompt = f"""
         You are an AI managing a user's "Core Persona" memory. 
-        Your task is to merge any NEW permanent, identity-level facts from the recent conversation into the existing persona.
+        Your ONLY task is to extract permanent, identity-level facts about the USER from the recent conversation and merge them into the existing persona.
         
-        Examples of core facts: name, age, profession, hobbies, dietary restrictions, personality traits, location, etc.
-        DO NOT include specific conversational history, greetings, or temporary states.
-        
-        Rules:
-        1. Resolve conflicts (e.g. if existing says "Lives in NY" but new says "Moved to LA", update it to "Lives in LA").
-        2. Deduplicate facts.
-        3. Do not add conversational filler like "No new facts" or "Assistant's name". Only output the consolidated bulleted list.
-        4. If there are absolutely no core facts about the user to store, reply exactly with "NONE".
-        5. Output ONLY the bulleted list. No conversational pleasantries.
+        CRITICAL RULES:
+        1. YOU MUST ONLY EXTRACT FACTS ABOUT THE "USER". 
+        2. DO NOT extract facts about the "Assistant". If the Assistant says "My name is X", IGNORE IT.
+        3. Examples of core facts to extract: USER's name, age, profession, hobbies, preferences, location.
+        4. Resolve conflicts (e.g. if existing says "Lives in NY" but new says "Moved to LA", update it to "Lives in LA").
+        5. If there are absolutely no new core facts about the USER to store, reply exactly with "NONE".
+        6. Output ONLY a bulleted list of facts. No conversational filler.
         
         Existing Persona:
         {existing_persona}
