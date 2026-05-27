@@ -1,7 +1,13 @@
 import os
 import subprocess
 from celery import Celery
+from celery.signals import setup_logging as celery_setup_logging
 from src.core.config import settings
+
+@celery_setup_logging.connect
+def setup_celery_logging(**kwargs):
+    from src.core.logger import setup_logging
+    setup_logging()
 
 celery_app = Celery(
     "voice_tasks",

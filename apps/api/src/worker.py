@@ -14,21 +14,20 @@ from pipecat.services.deepgram.stt import DeepgramSTTService
 from pipecat.services.groq.llm import GroqLLMService
 from pipecat.services.cartesia.tts import CartesiaTTSService
 
+import sys
+from loguru import logger as loguru_logger
 from src.core.config import settings
-import logging
 
-logging.basicConfig(level=logging.INFO)
+# Force Pipecat/Loguru to output JSON
+loguru_logger.remove()
+loguru_logger.add(sys.stdout, serialize=True, level="INFO")
 
-structlog.configure(
-    processors=[
-        structlog.stdlib.add_log_level,
-        structlog.processors.TimeStamper(fmt="iso"),
-        structlog.processors.JSONRenderer()
-    ],
-    logger_factory=structlog.stdlib.LoggerFactory(),
-)
+# Import central logging to configure structlog for standard library
+from src.core.logger import setup_logging
+setup_logging()
 
-logger = structlog.get_logger()
+import structlog
+logger = structlog.get_logger(__name__)
 
 async def main(room_name: str):
     if not settings.DEEPGRAM_API_KEY or not settings.GROQ_API_KEY or not settings.CARTESIA_API_KEY:
