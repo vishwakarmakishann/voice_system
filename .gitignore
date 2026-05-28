@@ -111,6 +111,14 @@ next-env.d.ts
 
 /graphify-out
 
+# Graphify exclusions
+graphify-out/manifest.json
+graphify-out/cost.json
+graphify-out/cache/
+
+# Virtual Environment
+graphify_env/
+
 plan.md
 steps.txt
 
